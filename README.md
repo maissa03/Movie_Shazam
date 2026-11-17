@@ -3,13 +3,6 @@
 **Retrouver le film et l'instant exact d'un extrait vidéo de 5 à 20 secondes**, parmi les films de votre
 bibliothèque locale. Moteur Python (FFmpeg + pHash + alignement temporel), interface Next.js en français.
 
-Projet du module *Systèmes distribués et parallèles* (ISAMM 2026–2027) : démonstration de programmation
-**parallèle et concurrente sur un seul ordinateur** — `multiprocessing` pour le calcul, `threading` pour les E/S
-bloquantes, `asyncio` pour coordonner. *Nom provisoire, sans affiliation avec Shazam.*
-
-> **100 % local.** Tout s'exécute sur un seul PC Windows (ou Linux/macOS), sans GPU, sans cloud, sans IA,
-> sans worker distant ni socket personnalisée. Le navigateur parle au backend en HTTP sur `127.0.0.1`.
-
 ![Reconnaissance d'un extrait](docs/screenshots/reconnaissance_match.png)
 
 ## Ce qui fonctionne réellement
