@@ -5,7 +5,6 @@ bibliothèque locale. Moteur Python (FFmpeg + pHash + alignement temporel), inte
 
 ![Reconnaissance d'un extrait](docs/screenshots/reconnaissance_match.png)
 
-## Ce qui fonctionne réellement
 
 * **Bibliothèque** : import par glisser-déposer (copie en flux + SHA-256 + validation ffprobe), vignettes,
   recherche textuelle, tri, filtre, détail, modification du titre/année, suppression cohérente, réindexation
@@ -149,35 +148,3 @@ Voir [`backend/.env.example`](backend/.env.example). Principaux réglages : `PRO
 `MAX_QUERY_DURATION_SECONDS=30`, `MAX_UPLOAD_GB=8`. Changer `FINGERPRINT_FPS` crée une nouvelle version d'index
 (les anciens index ne sont jamais mélangés).
 
-## Choix de conception assumés (écarts raisonnés au cahier des charges)
-
-* **Clip échantillonné 5× plus finement que l'index** (10 img/s contre 2), avec exactement le même pHash : un clip
-  peut commencer entre deux images indexées ; sans cela, les scènes rapides n'étaient plus reconnues.
-* **Longueur de segment adaptative** (10 à 180 s, au moins 8 segments par film) pour que les films courts
-  bénéficient aussi du parallélisme ; le découpage ne dépend pas du nombre de processus.
-* **Empreintes du clip calculées dans un thread** (le décodage est fait par un sous-processus FFmpeg) plutôt que dans
-  le pool, pour ne pas attendre derrière les segments d'indexation.
-* **Pas de `MAX_FFMPEG_CONCURRENT`** : le nombre de FFmpeg est borné structurellement (un par processus du pool, un
-  par thread E/S) ; un sémaphore supplémentaire serait redondant.
-* `stored_name` relatif au lieu d'un chemin absolu ; empreintes en BLOB de 8 octets ; seuils calibrés sur un split
-  de validation distinct du test.
-
-## Limites connues
-
-* Pas de reconnaissance garantie après gros recadrage, incrustations importantes, miroir, accélération ou écran
-  filmé au téléphone (hors périmètre V1). L'audio n'est pas utilisé.
-* Le score est un **indicateur heuristique**, pas une probabilité calibrée.
-* Le corpus de validation est synthétique et petit (28 clips) : les seuils devront être revérifiés sur de vrais films.
-* Mesures « à froid » non réalisées (vider le cache disque de Windows exige des droits administrateur) : toutes les
-  mesures sont « à chaud ».
-* Pas de reprise automatique après une panne système complète : les jobs interrompus sont marqués comme tels au
-  redémarrage, et une réindexation reprend à partir des segments déjà terminés.
-* Machine de développement : 8 Go de RAM (et non 16) ; fermer les applications lourdes pendant les démonstrations.
-
-## Documentation
-
-* [`docs/CONCURRENCY_EXPLAINED.md`](docs/CONCURRENCY_EXPLAINED.md) — chaque technique du cours, le problème résolu, le code, la preuve.
-* [`docs/DEMO_SOUTENANCE.md`](docs/DEMO_SOUTENANCE.md) — déroulé de la démonstration sur un seul PC.
-* [`docs/PLAN_PRESENTATION.md`](docs/PLAN_PRESENTATION.md) — plan des slides avec notes orales.
-* [`docs/results/RESULTATS.md`](docs/results/RESULTATS.md) — toutes les mesures.
-* `docs/MovieShazam_Guide_Zero_to_Hero.pdf` — guide pédagogique complet (en anglais), de zéro à expert.
